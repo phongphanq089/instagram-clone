@@ -1,5 +1,6 @@
-import { Db, MongoClient } from 'mongodb'
+import { Collection, Db, MongoClient } from 'mongodb'
 import env from './environment'
+import { Users } from '~/models/schemas/user.schema'
 
 const uri = `mongodb+srv://${env.dbUsername}:${env.dbPassword}@phongphan.44sod.mongodb.net/?retryWrites=true&w=majority&appName=phongphan`
 
@@ -18,6 +19,10 @@ class DatabaseService {
       console.log('Error', err)
       throw err
     }
+  }
+
+  get users(): Collection<Users> {
+    return this.db.collection(env.dbUserCollection as string)
   }
   async closeDb() {
     await this.client.close()

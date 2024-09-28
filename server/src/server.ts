@@ -2,41 +2,37 @@ import express from 'express'
 import env, { isProduction } from './config/environment'
 import databaseService from './config/mongoDb'
 import { createServer } from 'http'
-import rateLimit from 'express-rate-limit'
-import helmet from 'helmet'
-import cors, { CorsOptions } from 'cors'
-
+import { applySecurityMiddlewares } from './config/security'
+import routerUser from './routes/users.routes'
 const app = express()
+
 const httpServer = createServer(app)
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false // Disable the `X-RateLimit-*` headers
-})
+app.use(express.json()) // Middleware để parse body JSON
+app.use(express.urlencoded({ extended: true })) // Middleware để parse body từ form
 
-app.use(limiter)
-
-app.use(helmet())
-
-const corsOptions: CorsOptions = {
-  origin: isProduction ? env.clientUrl : '*'
-}
-app.use(cors(corsOptions))
+applySecurityMiddlewares({ app, isProduction, env })
 
 const startDatabase = async () => {
-  console.log('Starting database')
-
   if (isProduction) {
     httpServer.listen(process.env.PORT, () => {
       console.log(`Hello ${env.dbUsername}, I am running at ${process.env.PORT}`)
     })
   } else {
-    httpServer.listen(env.port, () => {
-      console.log(`Hello ${env.dbUsername}, I am running at ${env.port}`)
-    })
+    httpServer
+      .listen(env.port, () => {
+        console.log(`Hello ${env.dbUsername}, I am running at ${env.port}`)
+      })
+      .on('error', (err: any) => {
+        if (err.code === 'EADDRINUSE') {
+          console.error(`Port ${env.port} is already in use. Please use another port.`)
+        } else {
+          console.error(`Error occurred: ${err.message}`)
+        }
+      })
   }
+
+  app.use('/users', routerUser)
 }
 
 // ========|| DATABASE SERVER || ===========//
@@ -48,7 +44,3 @@ databaseService
     console.error('Failed to start database')
     process.exit(1)
   })
-
-app.listen(env.port, () => {
-  console.log(`App listening on port ${env.port}`)
-})
