@@ -4,6 +4,7 @@ import databaseService from './config/mongoDb'
 import { createServer } from 'http'
 import { applySecurityMiddlewares } from './config/security'
 import routerUser from './routes/users.routes'
+import defaultErrorHandle from './middlewares/errors.middlewares'
 const app = express()
 
 const httpServer = createServer(app)
@@ -33,6 +34,7 @@ const startDatabase = async () => {
   }
 
   app.use('/users', routerUser)
+  app.use(defaultErrorHandle)
 }
 
 // ========|| DATABASE SERVER || ===========//

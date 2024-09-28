@@ -1,6 +1,6 @@
 import { Collection, Db, MongoClient } from 'mongodb'
 import env from './environment'
-import { Users } from '~/models/schemas/user.schema'
+import Users from '~/models/schemas/user.schema'
 
 const uri = `mongodb+srv://${env.dbUsername}:${env.dbPassword}@phongphan.44sod.mongodb.net/?retryWrites=true&w=majority&appName=phongphan`
 

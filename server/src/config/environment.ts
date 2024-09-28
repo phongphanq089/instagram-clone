@@ -44,7 +44,12 @@ export const env = {
   dbUsername: process.env.DB_USERNAME,
   dbUserCollection: process.env.DB_USER_COLLECTION,
   clientUrl: process.env.CLIENT_URL,
-  passwordSecret: process.env.PASSWORD_SECRET
+  passwordSecret: process.env.PASSWORD_SECRET,
+  jwtSecret: process.env.JWT_SECRET,
+  refeshTokenExpriesIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+  accessTokenExpriesIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
+  emailVerifyTokenExpriesIn: process.env.EMAIL_VERIFY_TOKEN_EXPIRES_IN,
+  forgotPasswordTokenExpriesIn: process.env.FORGOT_PASSWORD_TOKEN_EXPIRES_IN
 }
 
 export default env

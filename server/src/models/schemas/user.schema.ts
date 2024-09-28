@@ -21,7 +21,7 @@ interface UserType {
   cover_photo?: string
 }
 
-export class Users {
+export default class Users {
   _id?: ObjectId
   name: string
   email: string
